@@ -1,0 +1,62 @@
+<h2 class="tabs">これは？</h2>
+<p>GenEPUB.com [じぇねぱぶ] は、電子書籍EPUBファイルをプレーンテキスト (plain text) から簡単に生成する変換サービスです。各種お好みのテキストを、オンラインでEPUB化してダウンロードできます。電書 (eBookコンテンツ) を手軽に自作してみましょう。APIも利用できます。</p>
+<div id="tabs_manual">
+	<ul class="tabs tabs_child">
+		<li><a href="#tabs_manual-1">利用法</a></li>
+		<li><a href="#tabs_manual-2">ご利用の前に</a></li>
+		<li><a href="#tabs_manual-3">about me</a></li>
+	</ul>
+	<div id="tabs_manual-1">
+		<h3 class="tabs">利用法</h3>
+		<p>最初に、【ご利用の前に】タグの内容を一度必ずお読みください。</p>
+		<ol>
+			<li>上の【EPUBを生成】タグをクリックして現れるフォームにて、a) EPUB化したいテキストを入力・貼り付け、または b) EPUB化したいテキストファイルを選択し、送信ボタンを押してください。</li>
+			<li>次に現れる画面で、EPUBのプレビューとダウンロードができます。また、EPUBファイルのダウンロードURLをご自身のメールアドレスに送信することもできます。</li>
+			<li>EPUBの閲覧は、専用機器の電子書籍リーダや、iPhone/iPadでは「<a href="http://www.apple.com/jp/ipad/built-in-apps/#ibooks">iBooks</a>」、PCでは「<a href="http://calibre-ebook.com/">calibre</a>」、といった様々なアプリ・ソフトの上で行えます。Androidに関しては<a href="http://www.forest.impress.co.jp/docs/serial/androidlab/20120229_515301.html">窓の杜 - 【杜のAndroid研究室】第86回：電子書籍を楽しもう！　EPUB対応リーダーアプリ5本をまとめて紹介</a>が参考になります。</li>
+		</ol>
+		<p>本サービスに関するアナウンスは、Twitterの <a href="<TMPL_VAR NAME=TWITTER_URL>"><TMPL_VAR NAME=TWITTER_ACCOUNT></a> にて随時行ないます。必要に応じてフォローをお願いいたします。ご意見・ご感想をどうぞお寄せください。</p>
+	</div>
+	<div id="tabs_manual-2">
+		<h3 class="tabs">ご利用の前に</h3>
+		<dl>
+			<dt>各種データの取り扱いについて</dt>
+			<dd>
+				<ul>
+					<li>GenEPUB.comサービスではセッション管理を行っており、ご利用にはcookieを有効にしているブラウザが必要です。</li>
+					<li>EPUBファイルは利用者本人以外には公開されません。また、生成から約<TMPL_VAR NAME=EXPIRE_EPUB_HOUR>時間後にサーバから消去します。</li>
+					<li>セッション管理情報・フォームへ入力された情報は、ブラウザ操作中は<TMPL_VAR NAME=EXPIRE_SESSION_MIN>分間保持されます。ブラウザを完全終了すると消去されます。</li>
+				</ul>
+			</dd>
+			<dt>運営方針とマネタイズについて</dt>
+			<dd>
+				<ul>
+					<li>GenEPUB.comサービスはAPIも含め、どなたも無料でお使いいただけます。</li>
+					<li>本サービスに関するアナウンスはTwitterの<a href="<TMPL_VAR NAME=TWITTER_URL>"><TMPL_VAR NAME=TWITTER_ACCOUNT></a>にて行ないます。</li>
+					<li>サービスの運営 (マネタイズ) のために、GenEPUB.comでは<a href="https://gumroad.com/l/ABA">Gumroad.com</a>と<a href="http://www.amazon.co.jp/?_encoding=UTF8&amp;tag=genepub-22&amp;linkCode=ur2&amp;camp=247&amp;creative=1211">Amazon.co.jpアソシエイト・プログラム</a>を使用します。</li>
+				</ul>
+			</dd>
+			<dt>免責事項・禁止事項</dt>
+			<dd>
+				<ul>
+					<li>GenEPUB.comサービスの利用に際し、他者の著作権を侵害しないでください。本サービスの利用に伴って発生する問題に関して、作者は責任を負いません。</li>
+					<li>サーバに過度な負荷をかけるような利用はお控えください。</li>
+				</ul>
+			</dd>
+		</dl>
+	</div>
+	<div id="tabs_manual-3">
+		<h3 class="tabs">about me</h3>
+		<dl>
+			<dt>技術情報</dt>
+			<dd>
+				<ul>
+					<li>アップロード可能なデータの上限は、合計で2MBに設定しています。</li>
+					<li>更新履歴や技術情報の詳細は、<a href="http://remoteroom.jp/dokuwiki/%E5%AE%9F%E7%94%A8%E3%81%99%E3%81%8F%E3%82%8A%E3%81%B7%E3%81%A8%E3%82%93:genepub.com" target="_blank">作者サイト (remoteroom.jp)</a> に記載しています。</li>
+					<li>ユーザ間のやりとりのために、<a href="https://www.facebook.com/groups/genepub/">GenEPUB.comのFacebookグループ</a>を作っています。</li>
+				</ul>
+			</dd>
+			<dt>作者について</dt>
+			<dd><p>大久保 正彦と申します。個人サイト: <a href="http://remoteroom.jp/">remoteroom.jp</a>/<a href="http://remoteroom.jp/dokuwiki/%E8%87%AA%E5%B7%B1%E7%B4%B9%E4%BB%8B">自己紹介</a>、Twitter: <a href="http://twitter.com/mah_jp">@mah_jp</a>、メール: mah あっとまーく remoteroom.jp</p></dd>
+		</dl>
+	</div>
+</div>

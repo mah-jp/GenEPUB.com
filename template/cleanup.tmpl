@@ -1,0 +1,16 @@
+<TMPL_INCLUDE NAME="header.tmpl">
+
+<p>flag_delete: <b><TMPL_VAR NAME=FLAG_DELETE></b></p>
+
+<h2>Session (本番 and テスト)</h2>
+<ul>
+	<li>expire: <TMPL_VAR NAME=EXPIRE_SESSION_MIN>分</li>
+	<li>count: <TMPL_VAR NAME=COUNT_SESSION_BEFORE> → <TMPL_VAR NAME=COUNT_SESSION_AFTER></li>
+</ul>
+<h2>EPUB (本番 or テスト)</h2>
+<ul>
+	<li>expire: <TMPL_VAR NAME=EXPIRE_EPUB_HOUR>時間</kbd></li>
+	<li>count: <TMPL_VAR NAME=COUNT_EPUB_BEFORE> → <TMPL_VAR NAME=COUNT_EPUB_AFTER></li>
+</ul>
+
+<TMPL_INCLUDE NAME="footer.tmpl">

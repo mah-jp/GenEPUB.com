@@ -1,0 +1,7 @@
+<script src="js/jquery.bookmark.pack.js"></script>
+<script src="js/jquery.bookmark.ext.pack.js"></script>
+<script>
+$(function() {
+	$('#bookmark').bookmark( { addFavorite: true, addEmail: true, emailSubject: '<TMPL_VAR NAME=TITLE_PRESET ESCAPE=JS>', emailBody: '<TMPL_VAR NAME=URL_PRESET ESCAPE=JS>', sites: ['twitter', 'hatena', 'google', 'evernote', 'facebook', 'tumblr', 'delicious', 'bitly'], title: '<TMPL_VAR NAME=TITLE_PRESET ESCAPE=JS>', url: '<TMPL_VAR NAME=URL_PRESET ESCAPE=JS>', description: '<TMPL_VAR NAME=DESCRIPTION_PRESET ESCAPE=JS>', } );
+});
+</script>

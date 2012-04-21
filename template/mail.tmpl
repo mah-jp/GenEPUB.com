@@ -1,0 +1,23 @@
+<TMPL_VAR NAME=MAILADDRESS> さま:
+
+<TMPL_VAR NAME=SITENAME_SHORT>より、EPUBファイルのダウンロードURLをお知らせいたします。
+
+    ■https (推奨)
+    <TMPL_VAR NAME=URL_DOWNLOAD>
+
+    ■http (※)
+    <TMPL_VAR NAME=URL_DOWNLOAD_HTTP>
+
+    ※Android標準ブラウザをご利用で、httpsのリンクへアクセスして
+    　「ファイル名が <無題> のままダウンロードが終わらない」などの
+    　不具合 http://bit.ly/wmU6yN が見られた場合、httpのリンクを使ってください。
+
+・ダウンロード時には、メール送信時に設定した「アイコトバ」の入力が必要です。
+・ダウンロードURLは、メール送信時点から<TMPL_VAR NAME=EXPIRE_SESSION_MIN>分間有効です。
+
+--
+<TMPL_VAR NAME=SITENAME> (ver.<TMPL_VAR NAME=VERSION>)
+　<TMPL_VAR NAME=URL> | <TMPL_VAR NAME=TWITTER_URL>
+　このメールは<TMPL_VAR NAME=SITENAME_SHORT>の送信専用アドレスから自動送信しています。
+　心当たりがない方は、申し訳ありませんがメールの削除をお願いいたします。
+　お問い合わせは <TMPL_VAR NAME=ADMIN_NAME> <TMPL_VAR NAME=ADMIN_MAILADDRESS> まで。

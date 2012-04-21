@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TMPL_IF NAME=MODE_STATUS>
+<result>
+	<error>1</error>
+	<message><TMPL_VAR NAME=STATUS></message>
+</result>
+<TMPL_ELSE>
+<result>
+	<error>0</error>
+	<title><TMPL_VAR NAME=EPUB_TITLE></title>
+	<filename><TMPL_VAR NAME=EPUB_FILENAME></filename>
+	<filesize><TMPL_VAR NAME=EPUB_FILESIZE></filesize>
+	<download><TMPL_VAR NAME=URL_DOWNLOAD></download>
+	<preview><TMPL_VAR NAME=URL_PREVIEW></preview>
+	<edit><TMPL_VAR NAME=URL_EDIT></edit>
+</result>
+</TMPL_IF>

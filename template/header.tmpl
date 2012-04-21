@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"><![endif]-->
+<title><TMPL_IF NAME=TITLE><TMPL_VAR NAME=TITLE> - </TMPL_IF><TMPL_VAR NAME=SITENAME></title>
+<meta name="description" content="GenEPUB.comは電子書籍EPUBをプレーンテキストから簡単に生成する変換サービス。テキストファイルをアップロード、またはテキストを入力・貼り付けるだけで目次付きEPUBファイルをダウンロードできます。API利用可能です。">
+<meta name="author" content="Masahiko OHKUBO; 大久保 正彦">
+<meta name="keywords" content="EPUB,電子書籍,テキスト,変換,生成,plain text">
+<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon"><link rel="icon" href="favicon.ico" type="image/vnd.microsoft.icon">
+<link rel="canonical" href="<TMPL_VAR NAME=URL>">
+<TMPL_INCLUDE NAME="jquery.tmpl">
+<link rel="stylesheet" href="css/genepub.css?<TMPL_VAR NAME=VERSION>">
+<TMPL_IF NAME=MODE_MAKE><style type="text/css">@import "js/jquery.bookmark.css";</style></TMPL_IF>
+</head>
+<body>
+<h1><a href="./">GenEPUB.com テキストから電子書籍EPUB生成</a></h1>
+<TMPL_IF NAME=DISABLE_SECURE><TMPL_ELSE><TMPL_IF NAME=HTTPS><TMPL_ELSE><div class="secure">[ <a href="<TMPL_VAR NAME=URL_HTTPS>">セキュアな接続 (https) で利用する</a> ]</div></TMPL_IF></TMPL_IF>
+<TMPL_IF NAME=DISABLE_SOCIALBAR><TMPL_ELSE><div class="socialbar"><ul><li><div id="socialbutton_twitter"></div></li><li><div id="socialbutton_hatena"></div></li><li><div id="socialbutton_google"></div></li><li><div id="socialbutton_evernote"></div></li><li><div id="socialbutton_facebook_like"></div></li></ul></div><div style="height: 0; clear: both;"></div></TMPL_IF>
+<div id="tabs">

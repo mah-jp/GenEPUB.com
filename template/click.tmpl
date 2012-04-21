@@ -1,0 +1,14 @@
+<TMPL_INCLUDE NAME="header.tmpl">
+
+<ul class="tabs">
+	<li><a href="#tabs1-1">「ダウンロードURL」画面</a></li>
+</ul>
+<div id="tabs1-1">
+	<h2 class="tabs">「ダウンロードURL」画面</h2>
+	<form id="click_action" name="click_action" method="post" action="<TMPL_VAR NAME=URL_NOW>"><input type="hidden" name="dummy" value="†〠"><input type="hidden" name="mode" value="click"><input type="hidden" name="id" value="<TMPL_VAR NAME=ID>">
+		<p>メール送信時に設定したアイコトバ <input type="text" name="downloadkey" value="" placeholder="downloadkey"> を入力して、<input type="submit" value="EPUBダウンロード" class="forward">を押してください。</p>
+	</form>
+	<TMPL_INCLUDE NAME="gumroad.tmpl">
+</div>
+
+<TMPL_INCLUDE NAME="footer.tmpl">

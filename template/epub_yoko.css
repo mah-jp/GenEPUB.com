@@ -1,0 +1,60 @@
+@charset "utf-8";
+
+/* general */
+body {
+	<TMPL_IF NAME=LINEHEIGHT>line-height: <TMPL_VAR NAME=LINEHEIGHT>%;<TMPL_ELSE></TMPL_IF>
+	<TMPL_IF NAME=FONTSIZE>font-size: <TMPL_VAR NAME=FONTSIZE>%;<TMPL_ELSE></TMPL_IF>
+	<TMPL_IF NAME=FONTWEIGHT>font-weight: <TMPL_VAR NAME=FONTWEIGHT>;<TMPL_ELSE></TMPL_IF>
+	<TMPL_IF NAME=BACKGROUNDCOLOR>background-color: <TMPL_VAR NAME=BACKGROUNDCOLOR>;<TMPL_ELSE></TMPL_IF>
+	<TMPL_IF NAME=COLOR>color: <TMPL_VAR NAME=COLOR>;<TMPL_ELSE></TMPL_IF>
+}
+h1 {
+	<TMPL_IF NAME=LINEHEIGHT>line-height: <TMPL_VAR NAME=LINEHEIGHT>%;<TMPL_ELSE></TMPL_IF>
+}
+h2 {
+	<TMPL_IF NAME=LINEHEIGHT>line-height: <TMPL_VAR NAME=LINEHEIGHT>%;<TMPL_ELSE></TMPL_IF>
+}
+a {
+	<TMPL_IF NAME=COLOR>color: <TMPL_VAR NAME=COLOR>;<TMPL_ELSE></TMPL_IF>
+}
+p {
+	text-indent: 1em;
+}
+
+/* genepub */
+p.genepub-author {
+	text-align: right;
+	text-indent: 0;
+}
+p.genepub-description {
+	text-align: center;
+	text-indent: 0;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+p.genepub-contact {
+	text-align: right;
+	text-indent: 0;
+}
+ul.genepub-list, ul.genepub-toc {
+	list-style: none;
+}
+ul.genepub-list li, ul.genepub-toc li {
+	padding: 0.1em 0;
+}
+a.genepub-url {
+}
+a.genepub-mailto {
+}
+a.genepub-twitter {
+}
+a.genepub-phone {
+}
+a.genepub-zipcode {
+}
+ruby.genepub-ruby {
+}
+rp.genepub-ruby {
+}
+rt.genepub-ruby {
+}

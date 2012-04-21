@@ -1,0 +1,9 @@
+</div>
+<div class="footer">ver.<a href="http://remoteroom.jp/dokuwiki/%E5%AE%9F%E7%94%A8%E3%81%99%E3%81%8F%E3%82%8A%E3%81%B7%E3%81%A8%E3%82%93:genepub.com#genepubcom%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4"><TMPL_VAR NAME=VERSION></a> | 公式Twitter: <a href="<TMPL_VAR NAME=TWITTER_URL>"><TMPL_VAR NAME=TWITTER_ACCOUNT></a> | by <a href="http://remoteroom.jp/"><TMPL_VAR NAME=ADMIN_NAME></a> (<a href="http://twitter.com/mah_jp">@mah_jp</a>)</div><div style="height: 0; clear: both;"></div>
+<TMPL_IF NAME=DISABLE_SOCIALBAR><TMPL_ELSE><TMPL_INCLUDE NAME="jquery-socialbutton.tmpl"></TMPL_IF>
+<TMPL_IF NAME=MODE_MAKE><TMPL_INCLUDE NAME="jquery-bookmark.tmpl"></TMPL_IF>
+<TMPL_IF NAME=MODE_EDIT><TMPL_INCLUDE NAME="jquery-highlight.tmpl"></TMPL_IF>
+<TMPL_IF NAME=DISABLE_AD><TMPL_ELSE><TMPL_IF NAME=HTTPS><TMPL_INCLUDE NAME="ad_output_https.tmpl"><TMPL_ELSE><TMPL_INCLUDE NAME="ad_output_http.tmpl"></TMPL_IF></TMPL_IF>
+<script>var _gaq=[['_setAccount','UA-27418961-1'],['_trackPageview']]; (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1; g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js'; s.parentNode.insertBefore(g,s)}(document,'script'));</script>
+</body>
+</html>

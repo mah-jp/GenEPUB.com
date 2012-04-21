@@ -1,0 +1,8 @@
+<TMPL_IF NAME=AMAZON_REF>
+<h2>Amazonで人気の品</h2>
+<div id="amazon">
+<TMPL_LOOP NAME=AMAZON_REF><div class="amazon_item"<TMPL_IF NAME=WIDTH> style="width: <TMPL_VAR NAME=WIDTH_MAX>px;"</TMPL_IF>><a href="<TMPL_VAR NAME=URL>" target="_blank"><TMPL_IF NAME=HTTPS><img src="<TMPL_VAR NAME=IMAGE_HTTPS>" width="<TMPL_VAR NAME=WIDTH>" height="<TMPL_VAR NAME=HEIGHT>" alt="商品イメージ"><TMPL_ELSE><img src="<TMPL_VAR NAME=IMAGE_HTTP>" width="<TMPL_VAR NAME=WIDTH>" height="<TMPL_VAR NAME=HEIGHT>" alt="商品イメージ"></TMPL_IF><div class="amazon_title"><TMPL_VAR NAME=NAME><TMPL_IF NAME=AUTHOR> by <TMPL_VAR NAME=AUTHOR></TMPL_IF><TMPL_IF NAME=PRICE><span class="amazon_price"> <TMPL_VAR NAME=PRICE></span></TMPL_IF></div></a></div></TMPL_LOOP>
+</div>
+<script src="js/jquery.masonry.min.js"></script>
+<script>$(function(){ $('#amazon').masonry({ itemSelector: '.amazon_item', columnWidth: <TMPL_VAR NAME=WIDTH_MAX> + 6, isFitWidth: true, isAnimated: true, }); });</script>
+</TMPL_IF>

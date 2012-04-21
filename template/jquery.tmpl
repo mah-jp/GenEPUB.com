@@ -1,0 +1,12 @@
+<script src="//www.google.com/jsapi"></script><script>google.load("jquery", "1"); google.load("jqueryui", "1");</script>
+<script src="js/jquery.cookie.js"></script>
+<link rel="stylesheet" href="js/jquery-ui-1.8.17.custom.css">
+<script>
+	google.setOnLoadCallback(function(){
+		$("#tabs").tabs({cookie:{}<TMPL_IF NAME=FLAG_FORM>,selected:1</TMPL_IF>});
+		<TMPL_IF NAME=MODE_EDIT>$("#tabs_form").tabs({cookie:{}});</TMPL_IF>
+		<TMPL_IF NAME=MODE_EDIT>$("#tabs_text").tabs({cookie:{}});</TMPL_IF>
+		<TMPL_IF NAME=MODE_EDIT>$("#tabs_manual").tabs({cookie:{}});</TMPL_IF>
+		<TMPL_IF NAME=MODE_MAKE>$("#tabs_make").tabs({selected:0});</TMPL_IF>
+	});
+</script>

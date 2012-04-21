@@ -1,0 +1,10 @@
+<script src="js/jquery.socialbutton-1.8.1.js"></script>
+<script>
+$(function() {
+	$('#socialbutton_twitter').socialbutton('twitter', { url: '<TMPL_VAR NAME=URL ESCAPE=JS>/', button: 'none', text: '<TMPL_VAR NAME=SITENAME ESCAPE=JS>', });
+	<TMPL_IF NAME=HTTPS>$('#socialbutton_hatena').socialbutton('hatena_oldstyle', { url: '<TMPL_VAR NAME=URL ESCAPE=JS>/', button: 'img/b_append.gif', });<TMPL_ELSE>$('#socialbutton_hatena').socialbutton('hatena', { url: '<TMPL_VAR NAME=URL ESCAPE=JS>/', button: 'simple', title: '<TMPL_VAR NAME=SITENAME ESCAPE=JS>', });</TMPL_IF>
+	$('#socialbutton_google').socialbutton('google_plusone', { url: '<TMPL_VAR NAME=URL ESCAPE=JS>/', button: 'medium', count: false, });
+	$('#socialbutton_evernote').socialbutton('evernote', { url: '<TMPL_VAR NAME=URL ESCAPE=JS>/', button: 'img/site-mem-22.png', style: 'full', text: '<TMPL_VAR NAME=SITENAME ESCAPE=JS>', });
+	$('#socialbutton_facebook_like').socialbutton('facebook_like', { url: '<TMPL_VAR NAME=URL ESCAPE=JS>/', button: 'button_count', width: 108, });
+});
+</script>

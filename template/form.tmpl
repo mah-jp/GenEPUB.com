@@ -1,0 +1,159 @@
+<form id="make_action" name="make_action" method="post" enctype="multipart/form-data" action="<TMPL_VAR NAME=URL_NOW>">
+<input type="hidden" name="dummy" value="†〠">
+
+<h2 class="tabs">EPUBを生成</h2>
+<p>EPUBファイルに変換するテキストの情報を、以下のフォームに入力し、最後に【EPUBを生成する】ボタンを押します。</p>
+<p><input type="submit" value="EPUBを生成する" class="forward" onclick="this.disabled=true; document.getElementById('make_progress').style.display='inline'; this.form.submit();"> クリック後は、数十秒お待ちください。<progress id="make_progress" max="100" style="display: none;"></progress></p>
+
+<div id="tabs_form">
+	<ul class="tabs tabs_child">
+		<li><a href="#tabs_form-1">基本入力</a></li>
+		<li><a href="#tabs_form-2">章見出し抽出</a></li>
+		<li><a href="#tabs_form-3">表示・リンク調整</a></li>
+		<li><a href="#tabs_form-4">ルビ・アクセシビリティ</a></li>
+		<li><a href="#tabs_form-5">devel</a></li>
+	</ul>
+	<div id="tabs_form-1">
+		<dl>
+			<dt>書誌情報:</dt>
+			<dd>
+				<ul>
+					<li>タイトル:<input type="text" name="title" value="<TMPL_IF NAME=SESSION_TITLE><TMPL_VAR NAME=SESSION_TITLE><TMPL_ELSE></TMPL_IF>" size="50" placeholder="title"></li>
+					<li>著者:<input type="text" name="author" value="<TMPL_IF NAME=SESSION_AUTHOR><TMPL_VAR NAME=SESSION_AUTHOR><TMPL_ELSE></TMPL_IF>" size="50" placeholder="author"></li>
+					<li>説明:<input type="text" name="description" value="<TMPL_IF NAME=SESSION_DESCRIPTION><TMPL_VAR NAME=SESSION_DESCRIPTION><TMPL_ELSE></TMPL_IF>" size="50" placeholder="description"></li>
+					<li>言語:<input type="text" name="language" value="<TMPL_IF NAME=SESSION_LANGUAGE><TMPL_VAR NAME=SESSION_LANGUAGE><TMPL_ELSE>ja</TMPL_IF>" size="20" placeholder="language"> <small>(RFC5646: ja, en など)</small></li>
+				</ul>
+			</dd>
+		</dl>
+		<div id="tabs_text">
+			<ul class="tabs tabs_child">
+				<li><a href="#tabs_text-1">a.貼り付け</a></li>
+				<li><a href="#tabs_text-2">b.アップロード</a></li>
+			</ul>
+			<div id="tabs_text-1">
+				<dl>
+					<dt><input type="radio" name="bodyinput" id="bodyinput_text" value="text" checked="checked">a.本文テキストを貼り付け:</dt>
+					<dd>
+<textarea name="body" id="textarea_body" cols="70" rows="10" placeholder="body" onclick="document.getElementById('bodyinput_text').checked=true;"><TMPL_IF NAME=SESSION_BODY><TMPL_VAR NAME=SESSION_BODY><TMPL_ELSE><TMPL_INCLUDE NAME="body_sample.tmpl"></TMPL_IF></textarea>　<button type="button" onclick="if(window.confirm('本文テキストを消去してよろしいですか？')){document.getElementById('textarea_body').value='';}">本文テキスト欄を消去</button>
+					</dd>
+				</dl>
+			</div>
+			<div id="tabs_text-2">
+				<dl>
+					<dt><input type="radio" name="bodyinput" id="bodyinput_file" value="file">b.テキストファイルをアップロード (複数選択可):</dt>
+					<dd>
+						<input type="file" name="textfile" multiple="multiple" onclick="document.getElementById('bodyinput_file').checked=true;">
+						<p><small>ファイルの複数選択は、選択ダイアログ内でctrlキーまたはcommandキーを使って行なってください。また、各ファイルは名前順に結合されます。</small></p>
+					</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+	<div id="tabs_form-2">
+		<dl>
+			<dt>章見出しに使用されている冒頭部分の文字を指定:</dt>
+			<dd>
+				<ul>
+					<li><input type="radio" name="chapter" value="no" <TMPL_IF NAME=SESSION_CHAPTER_NO>checked="checked"<TMPL_ELSE></TMPL_IF>>章見出しの抽出をしない</li>
+					<li><input type="radio" name="chapter" value="free" <TMPL_IF NAME=SESSION_CHAPTER_FREE>checked="checked"<TMPL_ELSE></TMPL_IF> id="radio_free">該当文字を半角カンマ区切りで列挙→<kbd>^</kbd><input type="text" name="chapter_free" value="<TMPL_IF NAME=SESSION_CHAPTER_FREE_TEXT><TMPL_VAR NAME=SESSION_CHAPTER_FREE_TEXT><TMPL_ELSE></TMPL_IF>" placeholder="comma separated values" size="20" onclick="document.getElementById('radio_free').checked=true;"></li>
+					<li><input type="radio" name="chapter" value="symbol" <TMPL_IF NAME=SESSION_CHAPTER_SYMBOL>checked="checked"<TMPL_ELSE></TMPL_IF>>全角記号 <kbd>^(■|□|●|○|★|☆)</kbd></li>
+					<li><input type="radio" name="chapter" value="dp" <TMPL_IF NAME=SESSION_CHAPTER_DP>checked="checked"<TMPL_ELSE></TMPL_IF>>半角数字1〜2桁＋半角ピリオド <kbd>^(\d{1,2}\.)</kbd></li>
+					<li><input type="radio" name="chapter" value="zd" <TMPL_IF NAME=SESSION_CHAPTER_ZD>checked="checked"<TMPL_ELSE></TMPL_IF>>全角数字 <kbd>^(１|２|３| 〜 |９|０)</kbd></li>
+					<li><input type="radio" name="chapter" value="rn" <TMPL_IF NAME=SESSION_CHAPTER_RN>checked="checked"<TMPL_ELSE></TMPL_IF>>ローマ数字 <kbd>^(Ⅰ|Ⅱ|Ⅲ| 〜 |Ⅹ)</kbd></li>
+					<li><input type="radio" name="chapter" value="cd" <TMPL_IF NAME=SESSION_CHAPTER_CD>checked="checked"<TMPL_ELSE></TMPL_IF>>丸数字 <kbd>^(①|②|③| 〜 |⑳)</kbd></li>
+					<li><input type="radio" name="chapter" value="wz" <TMPL_IF NAME=SESSION_CHAPTER_WZ>checked="checked"<TMPL_ELSE></TMPL_IF>>ピリオド表記の階層化テキスト <kbd>^(\.{1,6})[^\.]</kbd></li>
+					<li><input type="radio" name="chapter" value="wiki" <TMPL_IF NAME=SESSION_CHAPTER_WIKI>checked="checked"<TMPL_ELSE></TMPL_IF>>wiki記法 <kbd>^(\={1,6} )</kbd></li>
+					<li><input type="radio" name="chapter" value="regex" <TMPL_IF NAME=SESSION_CHAPTER_REGEX>checked="checked"<TMPL_ELSE></TMPL_IF> id="radio_regex">Perlの正規表現で指定→<input type="text" name="chapter_regex" value="<TMPL_IF NAME=SESSION_CHAPTER_REGEX_TEXT><TMPL_VAR NAME=SESSION_CHAPTER_REGEX_TEXT><TMPL_ELSE></TMPL_IF>" placeholder="regex" size="20" onclick="document.getElementById('radio_regex').checked=true;"></li>
+					<!-- preset -->
+					<li><input type="radio" name="chapter" value="preset_sciencemail" <TMPL_IF NAME=SESSION_CHAPTER_PRESET_SCIENCEMAIL>checked="checked"<TMPL_ELSE></TMPL_IF>>preset_sciencemail: [＋半角数字1〜2桁＋半角コロン or [編集後記] <kbd>^(\[\d{1,2}:|\[編集後記\])</kbd></li>
+				</ul>
+			</dd>
+			<dt>抽出のためのヒント:</dt>
+			<dd>章見出しの各行について
+				<select name="chapter_emptyline"><option value="0" <TMPL_IF NAME=SESSION_CHAPTER_EMPTYLINE_0>selected="selected"<TMPL_ELSE></TMPL_IF>>0: 直前にも直後にも空行はない／わからない</option><option value="1" <TMPL_IF NAME=SESSION_CHAPTER_EMPTYLINE_1>selected="selected"<TMPL_ELSE></TMPL_IF>>1: 直前または直後に空行がある</option><option value="2" <TMPL_IF NAME=SESSION_CHAPTER_EMPTYLINE_2>selected="selected"<TMPL_ELSE></TMPL_IF>>2: 直前と直後に空行がある</option></select>
+				<p><small>章見出しと同じ形式であるために章見出しでない行も抽出されてしまう場合は、次のようにして、あらかじめ上のテキスト入力欄にて編集を行えば、不要な抽出を回避できます。</small></p><ul><li><small>方法a: 抽出したい行の冒頭に独自の記号を挿入し、その記号を上記の「該当文字を半角カンマ区切りで列挙」欄に記入</small></li><li><small>方法b: 抽出したくない行の冒頭にスペースを挿入</small></li></ul>
+			</dd>
+		</dl>
+	</div>
+	<div id="tabs_form-3">
+		<dl>
+			<dt>改行の処理: メールでよくある桁揃え整形用の改行を削除して、テキストの流し込みを行うか否かを指定します</dt>
+			<dd>
+				<select name="unfold"><option value="0" <TMPL_IF NAME=SESSION_UNFOLD_0>selected="selected"<TMPL_ELSE></TMPL_IF>>0: 改行はそのまま (流し込みを行わない)</option><option value="3" <TMPL_IF NAME=SESSION_UNFOLD_3>selected="selected"<TMPL_ELSE></TMPL_IF>>3: 整形用改行を削除 (流し込みを行う‐通常)</option><option value="6" <TMPL_IF NAME=SESSION_UNFOLD_6>selected="selected"<TMPL_ELSE></TMPL_IF>>6: 整形用改行を削除 (流し込みを行う‐より積極的に)</option></select>
+			</dd>
+			<dt>行間の調節: CSS内のline-heightの値を設定します</dt>
+			<dd>
+				<select name="lineheight"><option value="" <TMPL_IF NAME=SESSION_LINEHEIGHT><TMPL_ELSE>selected="selected"</TMPL_IF>>指定なし</option><option value="100" <TMPL_IF NAME=SESSION_LINEHEIGHT_100>selected="selected"<TMPL_ELSE></TMPL_IF>>100</option><option value="120" <TMPL_IF NAME=SESSION_LINEHEIGHT_120>selected="selected"<TMPL_ELSE></TMPL_IF>>120</option><option value="140" <TMPL_IF NAME=SESSION_LINEHEIGHT_140>selected="selected"<TMPL_ELSE></TMPL_IF>>140</option><option value="160" <TMPL_IF NAME=SESSION_LINEHEIGHT_160>selected="selected"<TMPL_ELSE></TMPL_IF>>160</option><option value="180" <TMPL_IF NAME=SESSION_LINEHEIGHT_180>selected="selected"<TMPL_ELSE></TMPL_IF>>180</option><option value="200" <TMPL_IF NAME=SESSION_LINEHEIGHT_200>selected="selected"<TMPL_ELSE></TMPL_IF>>200</option></select>％ (パーセント)
+			</dd>
+			<dt>リンクの処理: リンク化したい文字列を選びます</dt>
+			<dd>
+				<table>
+					<tr><th>URL・メールアドレス</th><td><input type="radio" name="link_url" value="1" <TMPL_IF NAME=SESSION_LINK_URL_1>checked="checked"<TMPL_ELSE></TMPL_IF>>リンク化する</td><td><input type="radio" name="link_url" value="0" <TMPL_IF NAME=SESSION_LINK_URL_1><TMPL_ELSE>checked="checked"</TMPL_IF>>そのまま</td></tr>
+					<tr><th>Twitterアカウント</th><td><input type="radio" name="link_twitter" value="1" <TMPL_IF NAME=SESSION_LINK_TWITTER_1>checked="checked"<TMPL_ELSE></TMPL_IF>>リンク化する</td><td><input type="radio" name="link_twitter" value="0" <TMPL_IF NAME=SESSION_LINK_TWITTER_1><TMPL_ELSE>checked="checked"</TMPL_IF>>そのまま</td></tr>
+					<tr><th>日本の電話番号</th><td><input type="radio" name="link_phone" value="1" <TMPL_IF NAME=SESSION_LINK_PHONE_1>checked="checked"<TMPL_ELSE></TMPL_IF>>リンク化する</td><td><input type="radio" name="link_phone" value="0" <TMPL_IF NAME=SESSION_LINK_PHONE_1><TMPL_ELSE>checked="checked"</TMPL_IF>>そのまま</td></tr>
+					<tr><th>日本の郵便番号</th><td><input type="radio" name="link_zipcode" value="1" <TMPL_IF NAME=SESSION_LINK_ZIPCODE_1>checked="checked"<TMPL_ELSE></TMPL_IF>>リンク化する</td><td><input type="radio" name="link_zipcode" value="0" <TMPL_IF NAME=SESSION_LINK_ZIPCODE_1><TMPL_ELSE>checked="checked"</TMPL_IF>>そのまま</td></tr>
+				</table>
+			</dd>
+		</dl>
+	</div>
+	<div id="tabs_form-4">
+		<dl>
+			<dt>ルビの処理: 特定表記のルビを解釈してrubyタグに変換します</dt>
+			<dd>
+				<ul>
+					<li><input type="radio" name="ruby" value="0" <TMPL_IF NAME=SESSION_RUBY_AOZORA><TMPL_ELSE><TMPL_IF NAME=SESSION_RUBY_SHINCHO><TMPL_ELSE>checked="checked"</TMPL_IF></TMPL_IF>>なにもしない</li>
+					<li><input type="radio" name="ruby" value="aozora" <TMPL_IF NAME=SESSION_RUBY_AOZORA>checked="checked"<TMPL_ELSE></TMPL_IF>>青空文庫形式を解釈する <kbd>これは｜てすと《テスト》です。</kbd></li>
+					<li><input type="radio" name="ruby" value="shincho" <TMPL_IF NAME=SESSION_RUBY_SHINCHO>checked="checked"<TMPL_ELSE></TMPL_IF>>新潮社形式を解釈する <kbd>これは#てすと{テスト}です。</kbd></li>
+				</ul>
+				<p>上記の例はEPUB内で次のように変換されます: <kbd>これは&lt;ruby&gt;てすと&lt;rp&gt;（&lt;/rp&gt;&lt;rt&gt;テスト&lt;/rt&gt;&lt;rp&gt;）&lt;/rp&gt;&lt;/ruby&gt;です。</kbd></p>
+			</dd>
+			<dt>文字: CSS内のfont-size, font-weightの値を設定します</dt>
+			<dd>
+				<table>
+					<tr>
+						<th>文字の大きさ</th>
+						<td colspan="2"><select name="fontsize"><option value="" <TMPL_IF NAME=SESSION_FONTSIZE><TMPL_ELSE>selected="selected"</TMPL_IF>>指定なし</option><option value="100" <TMPL_IF NAME=SESSION_FONTSIZE_100>selected="selected"<TMPL_ELSE></TMPL_IF>>100</option><option value="200" <TMPL_IF NAME=SESSION_FONTSIZE_200>selected="selected"<TMPL_ELSE></TMPL_IF>>200</option><option value="400" <TMPL_IF NAME=SESSION_FONTSIZE_400>selected="selected"<TMPL_ELSE></TMPL_IF>>400</option><option value="600" <TMPL_IF NAME=SESSION_FONTSIZE_600>selected="selected"<TMPL_ELSE></TMPL_IF>>600</option><option value="800" <TMPL_IF NAME=SESSION_FONTSIZE_800>selected="selected"<TMPL_ELSE></TMPL_IF>>800</option><option value="1600" <TMPL_IF NAME=SESSION_FONTSIZE_1600>selected="selected"<TMPL_ELSE></TMPL_IF>>1600</option></select>％ (パーセント)</td>
+					</tr>
+					<tr>
+						<th>文字の太さ</th>
+						<td><input type="radio" name="fontweight" value="" <TMPL_IF NAME=SESSION_FONTWEIGHT><TMPL_ELSE>checked="checked"</TMPL_IF>>指定なし</td>
+						<td><input type="radio" name="fontweight" value="bold" <TMPL_IF NAME=SESSION_FONTWEIGHT_BOLD>checked="checked"<TMPL_ELSE></TMPL_IF>>bold</td>
+					</tr>
+				</table>
+			</dd>
+			<dt>配色: <span class="sample_backgroundcolor sample_color">表示サンプルabc</span></dt>
+			<dd>
+				<table>
+					<tr>
+						<th>背景色</th>
+						<td><input type="radio" name="backgroundcolor" value="" <TMPL_IF NAME=SESSION_BACKGROUNDCOLOR><TMPL_ELSE>checked="checked"</TMPL_IF> onclick="$('span.sample_color').css({backgroundColor:''});">指定なし</td>
+						<td><input type="radio" name="backgroundcolor" value="white" <TMPL_IF NAME=SESSION_BACKGROUNDCOLOR_WHITE>checked="checked"<TMPL_ELSE></TMPL_IF> onclick="$('span.sample_color').css({backgroundColor:'white'});">白 <span class="backgroundcolor_white">■</span></td>
+						<td><input type="radio" name="backgroundcolor" value="black" <TMPL_IF NAME=SESSION_BACKGROUNDCOLOR_BLACK>checked="checked"<TMPL_ELSE></TMPL_IF> onclick="$('span.sample_color').css({backgroundColor:'black'});">黒 <span class="backgroundcolor_black">■</span></td>
+						<td><input type="radio" name="backgroundcolor" value="blue" <TMPL_IF NAME=SESSION_BACKGROUNDCOLOR_BLUE>checked="checked"<TMPL_ELSE></TMPL_IF> onclick="$('span.sample_color').css({backgroundColor:'blue'});">青 <span class="backgroundcolor_blue">■</span></td>
+					</tr>
+					<tr>
+						<th>文字色</th>
+						<td><input type="radio" name="color" value="" <TMPL_IF NAME=SESSION_COLOR><TMPL_ELSE>checked="checked"</TMPL_IF> onclick="$('span.sample_backgroundcolor').css({color:''});">指定なし</td>
+						<td><input type="radio" name="color" value="black" <TMPL_IF NAME=SESSION_COLOR_BLACK>checked="checked"<TMPL_ELSE></TMPL_IF> onclick="$('span.sample_backgroundcolor').css({color:'black'});">黒 <span class="color_black">■</span></td>
+						<td><input type="radio" name="color" value="white" <TMPL_IF NAME=SESSION_COLOR_WHITE>checked="checked"<TMPL_ELSE></TMPL_IF> onclick="$('span.sample_backgroundcolor').css({color:'white'});">白 <span class="color_white">■</span></td>
+						<td><input type="radio" name="color" value="yellow" <TMPL_IF NAME=SESSION_COLOR_YELLOW>checked="checked"<TMPL_ELSE></TMPL_IF> onclick="$('span.sample_backgroundcolor').css({color:'yellow'});">黄 <span class="color_yellow">■</span></td>
+					</tr>
+				</table>
+			</dd>
+		</dl>
+		<script>$('span.sample_backgroundcolor').css({backgroundColor:$('input[name=backgroundcolor]:checked').val()});$('span.sample_color').css({color:$('input[name=color]:checked').val()});</script>
+	</div>
+	<div id="tabs_form-5">
+		<dl>
+			<dt>開発者向け: 本フォーム送信後に得るレスポンスの形式を指定します</dt>
+			<dd>
+				<ul>
+					<li><input type="radio" name="mode" value="make" checked="checked">HTML出力―通常はこちら</li>
+					<li><input type="radio" name="mode" value="api">XML出力―APIのテスト用</li>
+				</ul>
+			</dd>
+		</dl>
+	</div>
+</div>
+
+</form>

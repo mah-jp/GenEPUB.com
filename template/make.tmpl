@@ -1,0 +1,67 @@
+<TMPL_INCLUDE NAME="header.tmpl">
+
+<ul class="tabs">
+	<li><a href="#tabs-1">EPUBファイル完成！</a></li>
+</ul>
+<div id="tabs-1">
+	<h2 class="tabs">EPUBファイル完成！</h2>
+	<p><form method="post" action="<TMPL_VAR NAME=URL_NOW>"><input type="hidden" name="mode" value="edit"><input type="submit" value="フォーム画面へ戻る"> ←EPUBファイルの生成をもう一度行う場合に、押してください。<TMPL_IF NAME=FLAG_BODYINPUT_FILE>(テキストファイルを再アップロードする場合は、ファイルの選択から再度行なってください。)</TMPL_IF></form></p>
+	<TMPL_INCLUDE NAME="gumroad.tmpl">
+	<div id="tabs_make">
+		<ul class="tabs tabs_child">
+			<li><a href="#tabs_make-1">ファイル操作</a></li>
+			<li><a href="#tabs_make-2">詳細情報</a></li>
+		</ul>
+		<div id="tabs_make-1">
+			<h3 class="tabs">ファイル操作</h3>
+			<dl>
+				<dt>[1] EPUBファイルをプレビューするには:</dt>
+				<dd>
+					生成したEPUBファイルの内容をブラウザ上で確認できます。プレビューが動作するかどうかはブラウザに依存し、ChromeとFirefoxでは動作するようです。
+					<form method="post" action="<TMPL_VAR NAME=URL_NOW>" target="_blank"><input type="hidden" name="mode" value="preview"><input type="submit" value="EPUBをプレビュー" class="forward"></form>
+				</dd>
+				<dt>[2] EPUBファイルを入手するには (<TMPL_VAR NAME=EPUB_FILESIZE>bytes):</dt>
+				<dd>
+					<ol type="a">
+						<li>
+							EPUBファイルをダウンロードします。ダウンロードしたEPUBファイルがEPUB 2に準拠しているかどうかは、<a href="http://validator.idpf.org/" target="_blank">EPUB Validator</a>で確認できます。
+							<form method="get" action="<TMPL_VAR NAME=URL_NOW>" target="_blank"><input type="hidden" name="mode" value="download"><input type="submit" value="EPUBをダウンロード" class="forward"></form>
+						</li>
+						<li>
+							EPUBファイルの「ダウンロードURL」をご自身のスマートフォンなどへメール送信できます。ダウンロード時にはここで入力する「アイコトバ」が必要です。<br />
+							<script>function send_address(mailaddress,downloadkey) { $("#div_send").text("しばらくお待ちください……"); $("#button_send").attr("disabled","disabed"); $.ajax({ type: "POST", data: "mode=mail&mailaddress="+mailaddress+"&downloadkey="+downloadkey, url: "<TMPL_VAR NAME=URL_NOW ESCAPE=JS>", success: function(json){ $("#div_send").text(json.message); $("#button_send").removeAttr("disabled"); }});}</script>
+							<ul>
+								<li>アイコトバ (数字など): <input type="text" name="downloadkey" value="<TMPL_VAR NAME=DOWNLOADKEY>" id="downloadkey" size="20" placeholder="downloadkey"></li><li>送信先メールアドレス: <input type="email" name="mailaddress" value="<TMPL_VAR NAME=MAILADDRESS>" id="mailaddress" size="40" placeholder="mailaddress アドレスを間違えないように!"></li>
+							</ul>
+							<input type="button" id="button_send" value="ダウンロードURLをメール送信" onclick="$('#div_send').text(''); if(window.confirm('送信先メールアドレスは '+escape(document.getElementById('mailaddress').value)+' で正しいですね？')){send_address(document.getElementById('mailaddress').value, document.getElementById('downloadkey').value);}">
+							<div id="div_send"></div>
+						</li>
+					</ol>
+				</dd>
+				<dt>[3] EPUB生成に使用した今回の設定を今後も使うには:</dt>
+				<dd>
+					<span id="bookmark"></span>　<a href="<TMPL_VAR NAME=URL_PRESET>" target="_blank">プリセットURL</a>をブックマークしておくと、今回の設定をあとで再呼び出しできます。<br /><input type="text" value="<TMPL_VAR NAME=URL_PRESET>" size="60" placeholder="presetURL" onclick="this.select(0,this.value.length);">
+				</dd>
+			</dt>
+		</div>
+		<div id="tabs_make-2">
+			<h3 class="tabs">EPUB詳細情報</h3>
+			<dl>
+<TMPL_IF NAME=EPUB_LANGUAGE>
+				<dt>EPUBファイルの言語:</dt>
+				<dd><TMPL_VAR NAME=EPUB_LANGUAGE> (<TMPL_VAR NAME=EPUB_LANGUAGE_HUMAN>)</dd>
+</TMPL_IF>
+<TMPL_IF NAME=EPUB_CHAPTER>
+				<dt>EPUBファイルの「タイトル」と、抽出した「章の見出し」:</dt>
+				<dd>
+					<ul class="toc">
+						<TMPL_LOOP NAME=EPUB_TOC_REF><li><TMPL_VAR NAME=LABEL ESCAPE=NONE></li></TMPL_LOOP>
+					</ul>
+				</dd>
+</TMPL_IF>
+			</dl>
+		</div>
+	</div>
+</div>
+
+<TMPL_INCLUDE NAME="footer.tmpl">
