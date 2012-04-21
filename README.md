@@ -1,6 +1,6 @@
 GenEPUB.com
 ===========
 
-GenEPUB.com テキストから電子書籍EPUB生成
+GenEPUB.com (じぇねぱぶ) という、電子書籍EPUBファイルをプレーンテキストから簡単に生成する変換サービスで使用している、Perlのソースコードです。(Ver.20120414)
 
-http://genepub.com/
+実際のサービスは http://genepub.com/ で利用できます。
