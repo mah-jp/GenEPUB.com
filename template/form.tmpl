@@ -22,7 +22,7 @@
 					<li>著者:<input type="text" name="author" value="<TMPL_IF NAME=SESSION_AUTHOR><TMPL_VAR NAME=SESSION_AUTHOR><TMPL_ELSE></TMPL_IF>" size="50" placeholder="author"></li>
 					<li>説明:<input type="text" name="description" value="<TMPL_IF NAME=SESSION_DESCRIPTION><TMPL_VAR NAME=SESSION_DESCRIPTION><TMPL_ELSE></TMPL_IF>" size="50" placeholder="description"></li>
 					<li>言語:<input type="text" name="language" value="<TMPL_IF NAME=SESSION_LANGUAGE><TMPL_VAR NAME=SESSION_LANGUAGE><TMPL_ELSE>ja</TMPL_IF>" size="20" placeholder="language"> <small>(RFC5646: ja, en など)</small></li>
-					<li>表紙の画像:<input type="file" name="coverfile" accept="image/*" value="Image File"> <small>(JPEG,GIF,PNGなどの画像を選択し、表紙を付けることができます)</small></li>
+					<li>表紙の画像:<input type="file" name="coverfile" accept="image/*" value="Image File"> <small>(JPEG,PNG,GIF画像を選択し、表紙を付けることができます)</small></li>
 				</ul>
 			</dd>
 		</dl>
