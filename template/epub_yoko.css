@@ -2,6 +2,8 @@
 
 /* general */
 body {
+	padding: 0;
+	margin: 0;
 	<TMPL_IF NAME=LINEHEIGHT>line-height: <TMPL_VAR NAME=LINEHEIGHT>%;<TMPL_ELSE></TMPL_IF>
 	<TMPL_IF NAME=FONTSIZE>font-size: <TMPL_VAR NAME=FONTSIZE>%;<TMPL_ELSE></TMPL_IF>
 	<TMPL_IF NAME=FONTWEIGHT>font-weight: <TMPL_VAR NAME=FONTWEIGHT>;<TMPL_ELSE></TMPL_IF>
@@ -19,6 +21,10 @@ a {
 }
 p {
 	text-indent: 1em;
+}
+div {
+	padding: 0;
+	margin: 0;
 }
 
 /* genepub */
@@ -57,4 +63,10 @@ ruby.genepub-ruby {
 rp.genepub-ruby {
 }
 rt.genepub-ruby {
+}
+img.genepub-cover {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	vertical-align: top;
 }

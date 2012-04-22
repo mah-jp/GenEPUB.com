@@ -11,4 +11,4 @@ GenEPUB.com: PlainText to EPUB Converting/Generating Web Service (Perl). Availab
 Version
 -------
 
-ver.20120414
+ver.20120422: 画像を選んで表紙を付けることが出来るようになりました。

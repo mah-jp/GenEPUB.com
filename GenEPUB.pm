@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use utf8;
 
-use CGI; $CGI::POST_MAX = 3 * 1048576; # MegaBytes
+use CGI; $CGI::POST_MAX = 10 * 1048576; # MegaBytes
 use CGI::Carp qw(fatalsToBrowser);
 use CGI::Application; # cpanm
 use base qw(CGI::Application);
@@ -153,6 +153,7 @@ sub mode_make {
 		}
 	}
 	my($body_ref, $title_ref, $author_ref, $description_ref, $chapter_free_ref, $chapter_regex_ref, $body_original, %chapter_regex, $language_ref, $lineheight_ref, $fontsize_ref, $fontweight_ref, $backgroundcolor_ref, $color_ref);
+	my($cover_filehandle_ref, $cover_info_ref);
 	{
 		my($title, $author, $body, $description, $chapter_free, $chapter_regex, $language, $lineheight, $fontsize, $fontweight, $backgroundcolor, $color);
 		$title = $self->session->param('title');
@@ -218,13 +219,26 @@ sub mode_make {
 		%chapter_regex = &set_chapter_regex($chapter_free_ref, $chapter_regex_ref);
 		($body_original, $body_ref) = &set_body($self->session->param('unfold'), $body, \$chapter_regex{$self->session->param('chapter')}),
 		$body = $self->query->escapeHTML($$body_ref);
+		# cover
+		if ($self->query->upload('coverfile')) {
+			eval 'use Image::Info qw(image_info)';
+			my @filehandle = $self->query->upload('coverfile');
+			my($cover_filehandle) = $filehandle[0];
+			$cover_info_ref = Image::Info::image_info($cover_filehandle);
+			seek($cover_filehandle, 0, 0);
+			my(%info) = %{$cover_info_ref};
+			if (!($info{'file_media_type'})) {
+				die('ERROR: アップロードする表紙画像が正しく選択されていません。');
+			}
+			$cover_filehandle_ref = \$cover_filehandle;
+		}
 		($body_ref, $title_ref, $author_ref, $description_ref, $language_ref, $lineheight_ref, $fontsize_ref, $fontweight_ref, $backgroundcolor_ref, $color_ref) = (\$body, \$title, \$author, \$description, \$language, \$lineheight, \$fontsize, \$fontweight, \$backgroundcolor, \$color);
 	}
 	$body_ref = &set_tagging($body_ref, $self->session->param('link_url'), $self->session->param('link_twitter'), $self->session->param('link_phone'), $self->session->param('link_zipcode'), $self->session->param('ruby'));
 	my($chapter_ref, $navpoint_ref, $chapter_start) = &split_chapter($self, $body_ref, $title_ref, $chapter_regex{$self->session->param('chapter')}, $self->session->param('chapter_emptyline'));
 	my $epub_dir = $self->param('epub_dir');
 	&check_dir($epub_dir);
-	my($file, $filesize) = &make_epub($self, $epub_dir, $title_ref, $author_ref, $description_ref, $chapter_ref, $navpoint_ref, $chapter_start, $language_ref, $lineheight_ref, $fontsize_ref, $fontweight_ref, $backgroundcolor_ref, $color_ref, \$body_original);
+	my($file, $filesize) = &make_epub($self, $epub_dir, $title_ref, $author_ref, $description_ref, $chapter_ref, $navpoint_ref, $chapter_start, $language_ref, $lineheight_ref, $fontsize_ref, $fontweight_ref, $backgroundcolor_ref, $color_ref, \$body_original, $cover_filehandle_ref, $cover_info_ref);
 	$self->session->param('file' => $file);
 	my $flag_bodyinput_file;
 	if ($self->session->param('bodyinput') eq 'file') {
@@ -668,10 +682,15 @@ sub url_api {
 	}
 }
 
-sub commify_num {
-	my($num) = reverse $_[0];
-	$num =~ s/(\d\d\d)(?=\d)(?!\d\.)/$1,/g;
-	return(scalar(reverse($num)));
+sub commify_num { # thanks: http://www.din.or.jp/~ohzaki/perl.htm#NumberWithComma
+	my($num) = @_;
+	my($i, $j);
+	if ($num =~ /^[-+]?\d\d\d\d+/g) {
+		for ($i = pos($num) - 3, $j = $num =~ /^[-+]/; $i > $j; $i -= 3) {
+			substr($num, $i, 0) = ',';
+		}
+	}
+	return($num);
 }
 
 sub cut_cr {
@@ -775,7 +794,7 @@ sub search_amazon {
 	my @return;
 	my $response = $aws->search(asin => $asin_ref, sort => $sort);
 	if($response->is_success()) {
-		for ($response->properties()) { # http://search.cpan.org/~boumenot/Net-Amazon/lib/Net/Amazon/Property.pm
+		for ($response->properties()) { # thanks: http://search.cpan.org/~boumenot/Net-Amazon/lib/Net/Amazon/Property.pm
 			push(@return, 
 				{
 					'ASIN' => $_->ASIN() . '',
@@ -929,7 +948,7 @@ sub make_epub {
 	eval 'use File::Copy';
 	eval 'use File::Temp qw(tempdir)';
 	eval 'use Path::Class'; # cpanm
-	my($self, $epub_dir, $title_ref, $author_ref, $description_ref, $chapter_ref, $navpoint_ref, $chapter_start, $language_ref, $lineheight_ref, $fontsize_ref, $fontweight_ref, $backgroundcolor_ref, $color_ref, $body_original_ref) = @_;
+	my($self, $epub_dir, $title_ref, $author_ref, $description_ref, $chapter_ref, $navpoint_ref, $chapter_start, $language_ref, $lineheight_ref, $fontsize_ref, $fontweight_ref, $backgroundcolor_ref, $color_ref, $body_original_ref, $cover_filehandle_ref, $cover_info_ref) = @_;
 	my $tmp_dir_obj = File::Temp->newdir(CLEANUP => 1);
 	my $tmp_dir = $tmp_dir_obj->dirname;
 	my $file_epub = 'genepub-' . $self->session->param('_SESSION_ID') . '.epub';
@@ -955,11 +974,61 @@ sub make_epub {
 	my($chapter_id, $navpoint, $i);
 	my($playorder) = 1;
 	my(%subpage) = (
+		'cover' => { content => 'cover.xhtml', label => $self->query->escapeHTML(Encode::decode_utf8($self->config_param('system.label_cover'))) },
 		'toc' => { content => 'toc.xhtml', label => $self->query->escapeHTML(Encode::decode_utf8($self->config_param('system.label_toc'))) },
 		'information' => { content => 'genepub.xhtml', label => $self->query->escapeHTML(Encode::decode_utf8($self->config_param('system.label_information'))) },
 		'original' => { content => $file_plain, label => $self->query->escapeHTML(Encode::decode_utf8($self->config_param('system.label_original'))) },
 	);
 	$tmpl_obj = $self->load_tmpl('epub_chapter.tmpl', case_sensitive => 1, default_escape => 'none');
+	if (defined($$cover_filehandle_ref)) {
+		# cover
+		my($file_cover) = 'cover.' . lc($$cover_info_ref{'file_ext'});
+		my($cover_id);
+		if (($$cover_info_ref{'Orientation'} ne '') && ($$cover_info_ref{'Orientation'} ne 'top_left')) {
+			eval 'use Image::Magick';
+			my($tmp_cover) = Path::Class::file($tmp_dir, $file_cover);
+			my($im) = Image::Magick->new();
+			$im->Read(file => $$cover_filehandle_ref);
+			$im->Set(quality => $self->config_param('system.cover_quality'));
+			$im->Rotate(degrees =>  90 ) if ( $$cover_info_ref{'Orientation'} eq 'right_top');
+			$im->Rotate(degrees => 180 ) if ( $$cover_info_ref{'Orientation'} eq 'bot_right');
+			$im->Rotate(degrees => 270 ) if ( $$cover_info_ref{'Orientation'} eq 'left_bot');
+			$im->Write(filename => $tmp_cover);
+			$cover_id = $epub->copy_image($tmp_cover, $file_cover, $$cover_info_ref{'file_media_type'});
+		} else {
+			my($buffer);
+			read($$cover_filehandle_ref, $buffer, -s($$cover_filehandle_ref));
+			$cover_id = $epub->add_image($file_cover, $buffer, $$cover_info_ref{'file_media_type'});
+		}
+		$epub->add_meta_item('cover', $cover_id);
+		my($cover_size_long);
+		if (($$cover_info_ref{'Orientation'} eq 'right_top') || ($$cover_info_ref{'Orientation'} eq 'left_bot')) {
+			if ($$cover_info_ref{'width'} > $$cover_info_ref{'height'}) {
+				$cover_size_long = 'height';
+			} else {
+				$cover_size_long = 'width';
+			}
+		} else {
+			if ($$cover_info_ref{'width'} > $$cover_info_ref{'height'}) {
+				$cover_size_long = 'width';
+			} else {
+				$cover_size_long = 'height';
+			}
+		}
+		$tmpl_obj->param(
+			TITLE => $subpage{'cover'}{'label'},
+			LANGUAGE => $self->config_param('system.language'),
+			BODY => sprintf('<img src="%s" class="genepub-cover" alt="%s" %s="100%%" />', $file_cover, $subpage{'cover'}{'label'}, $cover_size_long),
+		);
+		$chapter_id = $epub->add_xhtml($subpage{'cover'}{'content'}, Encode::decode_utf8( $tmpl_obj->output() ));
+		$navpoint = $epub->add_navpoint(
+			label => $subpage{'cover'}{'label'},
+			id => $chapter_id,
+			content => $subpage{'cover'}{'content'},
+			play_order => $playorder,
+		);
+		$playorder ++;
+	}
 	{
 		# toc
 		my $tmpl_obj_child = $self->load_tmpl('epub_toc.tmpl', case_sensitive => 1, default_escape => 'none');
@@ -1042,9 +1111,9 @@ sub make_epub {
 #		);
 #		$playorder ++;
 	}
-	my $packfile = Path::Class::file($tmp_dir, $file_epub);
-	$epub->pack_zip("$packfile");
-	File::Copy::move($packfile, $epub_dir);
+	my $tmp_epub = Path::Class::file($tmp_dir, $file_epub);
+	$epub->pack_zip("$tmp_epub");
+	File::Copy::move($tmp_epub, $epub_dir);
 	chmod(0666, Path::Class::file($epub_dir, $file_epub));
 	return($file_epub, -s(Path::Class::file($epub_dir, $file_epub)));
 }
@@ -1150,7 +1219,7 @@ sub tagging_ruby {
 	my($ruby_regex);
 	if ($flag_ruby eq 'aozora') {
 		$ruby_regex = '｜?(\p{InBasicLatin}{1,128}|\p{InCJKSymbolsAndPunctuation}{1,128}|\p{InCJKUnifiedIdeographs}{1,128}|\p{InHalfwidthAndFullwidthForms}{1,128}|\p{InHiragana}{1,128}|\p{InKatakana}{1,128})《([^《]{1,128})》';
-	} elsif ($flag_ruby eq 'shincho') { # http://www.kotono8.com/2005/06/19ruby.html
+	} elsif ($flag_ruby eq 'shincho') { # thanks: http://www.kotono8.com/2005/06/19ruby.html
 		$ruby_regex = '#?(\p{InBasicLatin}{1,128}|\p{InCJKSymbolsAndPunctuation}{1,128}|\p{InCJKUnifiedIdeographs}{1,128}|\p{InHalfwidthAndFullwidthForms}{1,128}|\p{InHiragana}{1,128}|\p{InKatakana}{1,128})\{([^\{]{1,128})\}'
 	} else {
 		return($text_ref);
@@ -1200,12 +1269,12 @@ sub tagging_twitter {
 	return($text_ref);
 }
 
-sub tagging_url { # http://www.din.or.jp/~ohzaki/perl.htm#AutoLink
+sub tagging_url { # thanks: http://www.din.or.jp/~ohzaki/perl.htm#AutoLink
 	my($str_ref) = @_;
 	my($str) = $$str_ref;
 	my($http_URL_regex, $ftp_URL_regex, $mail_regex, $tag_regex_, $comment_tag_regex, $tag_regex);
 	my($text_regex, $result, $skip, $text_tmp, $tag_tmp);
-	$http_URL_regex = # http://www.din.or.jp/~ohzaki/perl.htm#httpURL
+	$http_URL_regex = # thanks: http://www.din.or.jp/~ohzaki/perl.htm#httpURL
 	q{\b(?:https?|shttp)://(?:(?:[-_.!~*'()a-zA-Z0-9;:&=+$,]|%[0-9A-Fa-f} .
 	q{][0-9A-Fa-f])*@)?(?:(?:[a-zA-Z0-9](?:[-a-zA-Z0-9]*[a-zA-Z0-9])?\.)} .
 	q{*[a-zA-Z](?:[-a-zA-Z0-9]*[a-zA-Z0-9])?\.?|[0-9]+\.[0-9]+\.[0-9]+\.} .
@@ -1216,7 +1285,7 @@ sub tagging_url { # http://www.din.or.jp/~ohzaki/perl.htm#AutoLink
 	q{*)?(?:\?(?:[-_.!~*'()a-zA-Z0-9;/?:@&=+$,]|%[0-9A-Fa-f][0-9A-Fa-f])} .
 	q{*)?(?:#(?:[-_.!~*'()a-zA-Z0-9;/?:@&=+$,]|%[0-9A-Fa-f][0-9A-Fa-f])*} .
 	q{)?};
-	$ftp_URL_regex = # http://www.din.or.jp/~ohzaki/perl.htm#ftpURL
+	$ftp_URL_regex = # thanks: http://www.din.or.jp/~ohzaki/perl.htm#ftpURL
 	q{\bftp://(?:(?:[-_.!~*'()a-zA-Z0-9;&=+$,]|%[0-9A-Fa-f][0-9A-Fa-f])*} .
 	q{(?::(?:[-_.!~*'()a-zA-Z0-9;&=+$,]|%[0-9A-Fa-f][0-9A-Fa-f])*)?@)?(?} .
 	q{:(?:[a-zA-Z0-9](?:[-a-zA-Z0-9]*[a-zA-Z0-9])?\.)*[a-zA-Z](?:[-a-zA-} .
@@ -1226,7 +1295,7 @@ sub tagging_url { # http://www.din.or.jp/~ohzaki/perl.htm#AutoLink
 	q{AIDaid])?)?(?:\?(?:[-_.!~*'()a-zA-Z0-9;/?:@&=+$,]|%[0-9A-Fa-f][0-9} .
 	q{A-Fa-f])*)?(?:#(?:[-_.!~*'()a-zA-Z0-9;/?:@&=+$,]|%[0-9A-Fa-f][0-9A} .
 	q{-Fa-f])*)?};
-	$mail_regex = # http://www.din.or.jp/~ohzaki/mail_regex.htm
+	$mail_regex = # thanks: http://www.din.or.jp/~ohzaki/mail_regex.htm
 	q{(?:[-!#-'*+/-9=?A-Z^-~]+(?:\.[-!#-'*+/-9=?A-Z^-~]+)*|"(?:[!#-\[\]-} .
 #	q{~]|\\\\[\x09 -~])*")@[-!#-'*+/-9=?A-Z^-~]+(?:\.[-!#-'*+/-9=?A-Z^-~]+} .
 	q{~]|\\\\[\x09 -~])*")@[-!#-'*+/-9=?A-Z^-~]+(?:\.[-!#-\x25'*+/-9=?A-Z^-~]+} . # トップドメインに & を含まないように変更
